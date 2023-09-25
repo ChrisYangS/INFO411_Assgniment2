@@ -256,7 +256,7 @@ begin
 	cleaned_df_list=[]
 	for df in df_list
 		data = allowmissing(reshape(sin.(1:20), 5, 4)); data[[2, 3, 7, 9, 13, 19]] .= missing;data
-		df1 = DataFrame(Impute.knn(Matrix(df); dims=:cols), header)
+		df1 = DataFrame(Impute.knn(k=1, Matrix(df); dims=:cols), header)
 		# drop ca column in each dataset
 		push!(cleaned_df_list,select!(df1,Not(:ca)))
 	end
@@ -268,6 +268,12 @@ begin
 	df_ds2_switzerland_clean = cleaned_df_list[2]
 	df_ds2_va_clean = cleaned_df_list[3];
 end
+
+# ╔═╡ fa4bec50-19ca-4e0d-9747-c853ba3c3bfe
+cleaned_df_list[2]
+
+# ╔═╡ a85eb71b-df02-4c08-bd24-6e8b3a1d8ac7
+df_ds2_switzerland
 
 # ╔═╡ d28bc4f9-0916-425a-b42e-673d98dc4808
 md"""
@@ -2420,6 +2426,8 @@ version = "1.4.1+1"
 # ╟─8f88b7ea-72a7-4b45-95e1-b1901bef0979
 # ╠═63a510bf-cd9d-4cab-9c6c-d1f0ba6216b0
 # ╠═47060d93-b2d9-4b2b-8aa3-9226b1dfcc89
+# ╠═fa4bec50-19ca-4e0d-9747-c853ba3c3bfe
+# ╠═a85eb71b-df02-4c08-bd24-6e8b3a1d8ac7
 # ╟─d28bc4f9-0916-425a-b42e-673d98dc4808
 # ╠═80280d15-6da9-4218-afc8-101fdf83884a
 # ╟─395cd0d9-c9bb-48e0-953e-872c569e5e8d
