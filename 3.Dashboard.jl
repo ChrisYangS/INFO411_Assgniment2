@@ -15,7 +15,7 @@ macro bind(def, element)
 end
 
 # ╔═╡ af25dd2a-09e9-4e28-9779-3f43358d77e4
-using  PlutoUI, HypertextLiteral,  CSV, DataFrames,Plots,Statistics,PairPlots,StatsPlots
+using  PlutoUI, HypertextLiteral,  CSV, DataFrames,Plots,Statistics,PairPlots,StatsPlots,Printf
 
 # ╔═╡ d4e8cf3f-65c7-4d40-9203-79a3e7ab0ec7
 using MLJ, Random, MLJLinearModels, MLJDecisionTreeInterface,DecisionTree,PyPlot
@@ -47,6 +47,48 @@ end
 
 # ╔═╡ c3228406-1ffc-4979-a712-47a0f5a6300b
 df_ds1
+
+# ╔═╡ 50cfa07a-53c8-4b04-a190-e936f4cfac51
+function pairwise_difference(arr)
+	# get value counts of each distinct pair value
+    
+	unique_pair = Int.(unique(arr))
+	result = zeros(length(unique_pair))
+    for i in 1:length(arr)
+         for u in 1:length(unique_pair)
+			 if arr[i] == unique_pair[u]
+				 result[u] = result[u]+1
+			 end
+		 end
+    end
+    return result, unique_pair
+end
+
+# ╔═╡ 8bf1a996-6cc7-432a-8f91-521cdee30815
+function generate_pie_chart(title, dataset_name, col)
+	grades ,names = pairwise_difference(col)
+	p = Plots.pie(names, grades)
+	title!("$title in $dataset_name Dataset", titlefontsize=10)
+	annotate!()
+	return p
+end
+
+# ╔═╡ 8cc749a9-5781-499a-acc7-a0512f4126fc
+begin
+	pie_heart_disease = generate_pie_chart("Occurrences of Heart Disease",uppercasefirst(split(split(location,"/")[end],"_")[2]),df_ds1[:, end])
+	
+	pie_sex = generate_pie_chart("Gender (1 = male, 0 = female) in ",uppercasefirst(split(split(location,"/")[end],"_")[2]),df_ds1.sex)
+	
+	pie_cp = generate_pie_chart("Chest Pain Type \n(1 = typical angina, 2 = atypical angina, \n3 = non-anginal pain, 4 = asymptomatic) ",uppercasefirst(split(split(location,"/")[end],"_")[2]),df_ds1.cp)
+	
+	restecg = generate_pie_chart("Resting Electrocardiographi Results \n(0 = normal, 1 = having ST-T wave abnormality,\n2 = showing probable or definite left\n ventricular hypertrophy by Estes' criteria) ",uppercasefirst(split(split(location,"/")[end],"_")[2]),df_ds1.restecg)
+
+	slope = generate_pie_chart("Slope of the peak exercise ST segment \n(1 = upsloping, 2 =flat, 3 = downsloping) ",uppercasefirst(split(split(location,"/")[end],"_")[2]),df_ds1.slope)
+
+	thal = generate_pie_chart("thal (3 = normal, 6 = fixed defect,\n7 = reversable defect) ",uppercasefirst(split(split(location,"/")[end],"_")[2]),df_ds1.thal)
+	@info PlutoRunner.currently_running_cell_id
+	Plots.plot(pie_heart_disease,pie_sex,pie_cp,restecg,slope,thal, layout=(3,2), spacing=10)
+end
 
 # ╔═╡ 05cc6b23-7c8d-4604-bf20-fa9ded36a579
 begin
@@ -173,10 +215,10 @@ function find_best_DT_model(df,n_trees,dataset_name, training_ratio)
     end
     
     Plots.plot(n_trees, train_arr, label="Training")
-    p = Plots.plot!(n_trees, test_arr, label="Tesing", title="Decesion Tree Training Accuracy on $dataset_name Dataset where depth is $(last(n_trees))")
+    p_acc = Plots.plot!(n_trees, test_arr, label="Tesing", title="Decesion Tree Training Accuracy on $dataset_name Dataset where depth is $(last(n_trees))")
 	summary_text = "The best training accuracy rate for $dataset_name data set is $(round(best_testing_acc_rate*100, digits=3))% where the max_depth is $best_testing_depth"
 	println(summary_text)
-	return summary_text, train, test, X, y, p
+	return summary_text, train, test, X, y, p_acc
 end
 
 # ╔═╡ 1a19f2c6-ce22-40f7-b53f-becfee24f04b
@@ -209,7 +251,7 @@ end
 notebook = PlutoRunner.notebook_id[] |> string
 
 # ╔═╡ 3c08ada2-5dbb-4497-b048-5f0b0d0b7c67
-eda_report_list = ["ae7ce2f8-6049-11ee-0503-3945f47fcd8b","4f3cda1a-e424-4d80-8932-ee00c694e83c","05cc6b23-7c8d-4604-bf20-fa9ded36a579","3815e713-2a40-43d5-95fb-dc29c28abb66","6a938a2e-a0e1-4479-859d-e097bdc3d607","8eb9fd64-5682-4ae1-bcd4-6f5be5f6b448"]
+eda_report_list = ["ae7ce2f8-6049-11ee-0503-3945f47fcd8b","4f3cda1a-e424-4d80-8932-ee00c694e83c","05cc6b23-7c8d-4604-bf20-fa9ded36a579","8cc749a9-5781-499a-acc7-a0512f4126fc","3815e713-2a40-43d5-95fb-dc29c28abb66","6a938a2e-a0e1-4479-859d-e097bdc3d607","8eb9fd64-5682-4ae1-bcd4-6f5be5f6b448"]
 
 # ╔═╡ 657dbf8b-281f-4b55-871a-d4f144abf208
 model_report_list = ["985af4c4-00ee-4d93-b92a-dd86db2e18f9","16ae59d8-4a3b-4514-ad2f-eaadfff86fea","d07cb60c-5436-4005-918e-853330450bc3","7acc3e32-73d9-4cbc-a498-ee823a447781","cab29aee-aa7e-4ba5-b849-305cb8648009","1a19f2c6-ce22-40f7-b53f-becfee24f04b","2bb84565-1197-40e9-8306-91f8af957e45"]
@@ -243,6 +285,7 @@ MLJLinearModels = "6ee0df7b-362f-4a72-a706-9e79364fb692"
 PairPlots = "43a3c2be-4208-490b-832a-a21dcd55d7da"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
@@ -269,7 +312,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.3"
 manifest_format = "2.0"
-project_hash = "ab2a16f66a63385e011e5e3cd1f0a69e8105cc99"
+project_hash = "083574ff1d9633c3e41411b6e7e658b6622184b2"
 
 [[deps.ARFFFiles]]
 deps = ["CategoricalArrays", "Dates", "Parsers", "Tables"]
@@ -2790,6 +2833,9 @@ version = "1.4.1+1"
 # ╠═4f3cda1a-e424-4d80-8932-ee00c694e83c
 # ╠═a27f285a-fdc9-4aac-9abd-2316479c4843
 # ╠═c3228406-1ffc-4979-a712-47a0f5a6300b
+# ╠═50cfa07a-53c8-4b04-a190-e936f4cfac51
+# ╠═8bf1a996-6cc7-432a-8f91-521cdee30815
+# ╠═8cc749a9-5781-499a-acc7-a0512f4126fc
 # ╠═05cc6b23-7c8d-4604-bf20-fa9ded36a579
 # ╠═3815e713-2a40-43d5-95fb-dc29c28abb66
 # ╠═70aebace-b825-4631-a6ea-48b8f2fa2b7e
