@@ -68,7 +68,7 @@ end
 function generate_pie_chart(title, dataset_name, col)
 	grades ,names = pairwise_difference(col)
 	p = Plots.pie(names, grades)
-	title!("$title in $dataset_name Dataset", titlefontsize=10)
+	title!("$title in $dataset_name Dataset", titlefontsize=8)
 	annotate!()
 	return p
 end
@@ -264,12 +264,12 @@ dash_model_final_url="http://localhost:1234/edit?" * "id=$notebook&" * join(["is
 
 # ╔═╡ 615b197b-3abb-4d59-ab7d-ff4de0a3a09e
 @htl("""
-<a href="$dash_eda_final_url" style="font_size=20">Click here for the EDA Dashboard</a>
+<a href="$dash_eda_final_url" style="font_size=20"><h1>Click here for the EDA Dashboard</h1></a>
 """)
 
 # ╔═╡ 314ebc9c-776e-4c9c-ad99-4a51055ba291
 @htl("""
-<a href="$dash_model_final_url" style="font_size=20">Click here for the Training Model Dashboard</a>
+<a href="$dash_model_final_url" style="font_size=20"><h1>Click here for the Training Model Dashboard</h1></a>
 """)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1659,20 +1659,18 @@ version = "7.8.3"
 
 [[deps.NNlib]]
 deps = ["Adapt", "Atomix", "ChainRulesCore", "GPUArraysCore", "KernelAbstractions", "LinearAlgebra", "Pkg", "Random", "Requires", "Statistics"]
-git-tree-sha1 = "3bc568de99214f72a76c7773ade218819afcc36e"
+git-tree-sha1 = "6e4e90c2e2ef091ef50b91af65fa4bb09c3d0728"
 uuid = "872c559c-99b0-510c-b3b7-b6c96a88d5cd"
-version = "0.9.7"
+version = "0.9.6"
 
     [deps.NNlib.extensions]
     NNlibAMDGPUExt = "AMDGPU"
     NNlibCUDACUDNNExt = ["CUDA", "cuDNN"]
     NNlibCUDAExt = "CUDA"
-    NNlibEnzymeCoreExt = "EnzymeCore"
 
     [deps.NNlib.weakdeps]
     AMDGPU = "21141c5a-9bdb-4563-92ae-f87d6854732e"
     CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
-    EnzymeCore = "f151be2c-9106-41f4-ab19-57ee4f262869"
     cuDNN = "02a925ec-e4fe-4b08-9a7e-0d78e3d38ccd"
 
 [[deps.NaNMath]]
@@ -2858,11 +2856,11 @@ version = "1.4.1+1"
 # ╠═2bb84565-1197-40e9-8306-91f8af957e45
 # ╟─d83bd85f-af90-43f4-87ac-394d0995f995
 # ╠═bc3d4ee0-f8bc-4e99-980f-5df22160c10c
-# ╠═3c08ada2-5dbb-4497-b048-5f0b0d0b7c67
-# ╠═657dbf8b-281f-4b55-871a-d4f144abf208
-# ╠═2ea40ed4-00ab-4461-997a-f9ae23f1ab62
-# ╠═12601def-f586-4490-a969-8e74007c172b
-# ╠═615b197b-3abb-4d59-ab7d-ff4de0a3a09e
-# ╠═314ebc9c-776e-4c9c-ad99-4a51055ba291
+# ╟─3c08ada2-5dbb-4497-b048-5f0b0d0b7c67
+# ╟─657dbf8b-281f-4b55-871a-d4f144abf208
+# ╟─2ea40ed4-00ab-4461-997a-f9ae23f1ab62
+# ╟─12601def-f586-4490-a969-8e74007c172b
+# ╟─615b197b-3abb-4d59-ab7d-ff4de0a3a09e
+# ╟─314ebc9c-776e-4c9c-ad99-4a51055ba291
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

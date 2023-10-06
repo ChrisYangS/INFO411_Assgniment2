@@ -71,11 +71,11 @@ begin
 end
 
 # ╔═╡ c3d2ae16-8ace-4af6-8e8b-9ce341cce81a
-md"Split the traininig and testing data following by 70% and 30% ratio."
+md"Split the traininig and testing data following by 80% and 20% ratio."
 
 # ╔═╡ 59bbc8f7-5bcc-4930-b85b-a2e8b6fd1fa9
 begin
-	train_sw, test_sw = partition(eachindex(y), 0.7, shuffle=true, rng=13);
+	train_sw, test_sw = partition(eachindex(y), 0.8, shuffle=true, rng=13);
 end
 
 # ╔═╡ bea05a8e-3609-4943-8f21-351fa06ae9ab
@@ -129,13 +129,9 @@ Based on this best tunning set, we are expected to have optimal RMS: *$(round(re
 # ╔═╡ 733f3ad7-5069-468a-96f0-ad8897353a76
 md"We are building the machine with be best configuration calculated."
 
-# ╔═╡ e9432720-891b-42ef-ac2b-d77e8257eb29
-rep.best_history_entry.model
-
 # ╔═╡ 66b3625d-e552-4593-8ad0-dbd1ea0b016e
 begin
 	# build randomforestregressor model
-	
 	decision_tree = rep.best_history_entry.model
 
 end
@@ -146,11 +142,14 @@ begin
 	MLJ.fit!(m, rows=train_sw, verbosity=0)
 end
 
-# ╔═╡ e41571be-44b3-4b67-a65d-a7febba4fa2e
-y_pred= round.(MLJ.predict(m, rows=test_sw))
+# ╔═╡ 08aebf52-2bc6-4691-8375-f8d5afa184d1
+md"We then calcualte the best accuracy rate for Swizerland dataset:"
 
-# ╔═╡ 94810b6f-742e-443e-8961-a5907c025990
-accuracy(mode.(y_pred),y[test_sw])
+# ╔═╡ e41571be-44b3-4b67-a65d-a7febba4fa2e
+begin
+	y_pred= round.(MLJ.predict(m, rows=test_sw))
+	accuracy(mode.(y_pred),y[test_sw])
+end
 
 # ╔═╡ ee6823c6-ded9-44a9-b4de-0e2600378b76
 function draw_accuracy_curve(X,y, train, test)	
@@ -267,7 +266,8 @@ function find_best_DT_model(df,n_trees,dataset_name)
 	Random.seed!(1)
 	y = categorical(df.num)
 	X = dropmissing(select(df,Not(:num)))
-	train, test = partition(1:nrows(X), 0.7, shuffle=true)
+	# 80% of dataset is used for training
+	train, test = partition(1:nrows(X), 0.8, shuffle=true)
     for depth in n_trees
         tree_T1 = DTree(max_depth=depth)
         mach_T1 = machine(tree_T1, X, y)
@@ -315,14 +315,55 @@ When change the training model from regression to classification, and using the 
  - $summary_text_sw
  - $summary_text_va
 The main reasons that max_depth parameter between Hugarian Swizerland&VA dataset is that models are having different number of categorical outcomes.
+"""
 
-**Recommendations**:
+# ╔═╡ 60a641f1-f8e3-439b-835c-a8bdccf98b52
+md"""
+##### This is still not very good testing results. We suspect that overwritten missing value at Data imputation may generate bias data that does not refect true data pattern.
 
-	Model Selection: Consider using a tree with a depth of 14 for dataset with 5  categorical output; and use depth of 7 for boolean output dataset, as it seems to offer the best testing accuracy without introducing too much complexity.
+---
+We will try to re-train dataset by removing any columns have more than 40% of missing datab. Based on the summary table in Data imputation, the following columns are excluded:
+- ca
+- thal
+- slope
+- fbs
 
-	Regularization and Pruning: If you decide to use deeper trees, you might want to explore tree-pruning techniques or other regularization methods to prevent overfitting.
+"""
 
-	Ensemble Methods: As mentioned previously, ensemble methods like Decision Trees can provide robustness against overfitting and might yield better results, especially if individual trees are overfitting."""
+# ╔═╡ 4993d8b4-97b4-46b9-98c5-e9cdf311ceaa
+begin
+	exclude_columns = Not(:thal, :slope,:fbs)
+	df_ds2_hungarian_clean_v2 = select(df_ds2_hungarian_clean, exclude_columns)
+	df_ds2_switzerland_clean_v2 = select(df_ds2_switzerland_clean,exclude_columns)
+	df_ds2_va_clean_v2 = select(df_ds2_va_clean,exclude_columns)
+end
+
+# ╔═╡ f18bb2ad-98f6-4314-a2e3-9e3b4c54aa71
+summary_text_hug_v2,train_hug1_v2, test_hug1_v2, X_hug1_v2, y_hug1_v2, plot_hug1_v2= find_best_DT_model(df_ds2_hungarian_clean_v2,1:20, "Hungarian");
+
+# ╔═╡ 4da5c114-f28b-4f2f-8a9a-4606e963cd04
+plot_hug1_v2
+
+# ╔═╡ 82261d76-3c66-48ab-98ea-49e1127a95de
+summary_text_sw_v2, train_sw1_v2, test_sw1_v2, X_sw1_v2, y_sw1_v2, plot_sw1_v2= find_best_DT_model(df_ds2_switzerland_clean_v2,1:20, "Swizerland");
+
+# ╔═╡ dec32b93-c5d5-4214-a06b-97b2bc2d5cd6
+plot_sw1_v2
+
+# ╔═╡ 040c24c3-ce30-4776-8fff-17e01916327f
+summary_text_va_v2,train_va1_v2, test_va1_v2,X_va1_v2, y_va1_v2, plot_va1_v2 = find_best_DT_model(df_ds2_va_clean_v2,1:20,"VA");
+
+# ╔═╡ ee168e36-ee71-4c43-86b0-5b105e716a06
+plot_va1_v2
+
+# ╔═╡ fd148d18-18bd-4a2f-bf42-94b5dd80139a
+md"""
+Even we removed columns have many missing values doe not change the improvement much, which indicates data imputationd using knn in the begining has no impact to impair the predication accuracy.
+
+	"""
+
+# ╔═╡ d57845ac-e4b7-40b4-b47f-af850199bb67
+md"#### As we know the potential category outcome of each type of dataset, we may can use KNN method as we aleady know K."
 
 # ╔═╡ abb0d09b-3825-4056-8b8a-d28b1f1e87f4
 function KNN_predict(K, X, y, train, test, dataset_name)
@@ -343,7 +384,16 @@ KNN_predict(5, X_sw1, y_sw1, train_sw1, test_sw1, "Swizerland");
 KNN_predict(5, X_va1, y_va1, train_va1, test_va1, "Va");
 
 # ╔═╡ 6c95df8d-dffb-44b2-8788-afe11c710079
-md"As we can see, KNN is not good as Decision Trees"
+md"As we can see, KNN does not have good prediction on boolean outcome, but better performance on mutiple categorical output than as Decision Trees"
+
+# ╔═╡ d7b6222a-d56a-4aa0-828b-95f72a5a9e50
+md"""
+
+**Recommendations**:
+	
+	It seems the prediction accuracy get improved by using classification model than regression model. 
+	Model Selection: Decision Tree Classfication, an KNN both have better performance than the Random Forest Tree regression mainly because they are better for categorical classfication predictions. In Decision Tree model, prediction accuracy for boolean output dataset is better than categorical outcome, but in KNN, prediction accuracy for mutiple mategory dataset is better than Decesion Tree sence we arealdy know K.
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -2178,35 +2228,34 @@ version = "1.4.1+1"
 # ╟─02259867-0ccc-4302-8fba-b92420f34208
 # ╟─63b3f4c9-52b9-48de-899d-efc13628d73d
 # ╠═f969b3c9-1e1b-4c9a-951c-2a1f4eb28744
-# ╠═c3d2ae16-8ace-4af6-8e8b-9ce341cce81a
+# ╟─c3d2ae16-8ace-4af6-8e8b-9ce341cce81a
 # ╠═59bbc8f7-5bcc-4930-b85b-a2e8b6fd1fa9
-# ╠═bea05a8e-3609-4943-8f21-351fa06ae9ab
+# ╟─bea05a8e-3609-4943-8f21-351fa06ae9ab
 # ╠═54f7e9bd-8823-4220-bb28-3c77f1a5b6a7
-# ╠═9ab197da-edcb-4ff6-b747-d9cea4f2f006
-# ╠═f1cee6fc-ce9c-41b3-bf92-4bba47b4e2f0
-# ╠═8f862bcc-f2f6-403b-ad68-6c5bd364416c
+# ╟─9ab197da-edcb-4ff6-b747-d9cea4f2f006
+# ╟─f1cee6fc-ce9c-41b3-bf92-4bba47b4e2f0
+# ╟─8f862bcc-f2f6-403b-ad68-6c5bd364416c
 # ╠═0d1f803b-4017-4251-87d8-ba10f0f83116
-# ╠═1ea8b886-a204-492d-9b5f-3cbce49f423e
-# ╠═733f3ad7-5069-468a-96f0-ad8897353a76
-# ╠═e9432720-891b-42ef-ac2b-d77e8257eb29
+# ╟─1ea8b886-a204-492d-9b5f-3cbce49f423e
+# ╟─733f3ad7-5069-468a-96f0-ad8897353a76
 # ╠═66b3625d-e552-4593-8ad0-dbd1ea0b016e
 # ╠═9f658810-72db-44d5-9eaf-95140b4e1bd2
+# ╟─08aebf52-2bc6-4691-8375-f8d5afa184d1
 # ╠═e41571be-44b3-4b67-a65d-a7febba4fa2e
-# ╠═94810b6f-742e-443e-8961-a5907c025990
 # ╠═ee6823c6-ded9-44a9-b4de-0e2600378b76
 # ╠═9158ca69-75ce-4d96-b967-7ec19e30aae8
 # ╟─e8ef7f48-b178-4ea4-9ce4-acbe9763928c
 # ╠═acd618ed-2dd5-467a-aa7b-6184fd6585bd
 # ╠═ed889ac7-d296-4f3e-8b22-743ac9c2802d
-# ╠═035d4673-9f08-47c7-8dcf-60914809c8a4
-# ╠═8f91b06f-5f62-414e-965a-250a334215bd
-# ╠═9b79699a-b042-4c1e-888d-836a6be62726
+# ╟─035d4673-9f08-47c7-8dcf-60914809c8a4
+# ╟─8f91b06f-5f62-414e-965a-250a334215bd
+# ╟─9b79699a-b042-4c1e-888d-836a6be62726
 # ╟─3632465f-39e1-4117-8902-b4b165a22cfd
 # ╠═979374f4-5a96-45a3-aa6b-eaf8d93fb159
 # ╟─0335421f-34bc-4ecf-8e33-9d5833bbf141
 # ╟─7c76d568-512a-4a76-b8aa-19d0e3b753d8
 # ╠═4f33b0d4-a5ac-4021-8e94-2b0cd70f4030
-# ╠═80a5776f-5a29-4268-ad66-625d3acc91fc
+# ╟─80a5776f-5a29-4268-ad66-625d3acc91fc
 # ╠═a5a50e0e-cbe6-440b-8c0a-79d227091efd
 # ╠═6d362a80-2256-4971-a734-51eaa700da8d
 # ╠═bd1d3612-e21b-4460-8512-7dfc2c6c49cc
@@ -2217,11 +2266,22 @@ version = "1.4.1+1"
 # ╠═81f9c5d3-61c7-4426-b2b4-36cdba1c548a
 # ╠═5189c2f0-86b4-4875-ba63-aa3a976922f6
 # ╟─d107fc58-32bc-4362-bc99-ec5a29df44ef
+# ╠═60a641f1-f8e3-439b-835c-a8bdccf98b52
+# ╠═4993d8b4-97b4-46b9-98c5-e9cdf311ceaa
+# ╠═f18bb2ad-98f6-4314-a2e3-9e3b4c54aa71
+# ╠═4da5c114-f28b-4f2f-8a9a-4606e963cd04
+# ╠═82261d76-3c66-48ab-98ea-49e1127a95de
+# ╠═dec32b93-c5d5-4214-a06b-97b2bc2d5cd6
+# ╠═040c24c3-ce30-4776-8fff-17e01916327f
+# ╠═ee168e36-ee71-4c43-86b0-5b105e716a06
+# ╟─fd148d18-18bd-4a2f-bf42-94b5dd80139a
+# ╟─d57845ac-e4b7-40b4-b47f-af850199bb67
 # ╠═486ca73a-3af3-4da4-8d1b-5ff28ac95b64
 # ╠═abb0d09b-3825-4056-8b8a-d28b1f1e87f4
 # ╠═02e024a1-d72b-4ac7-ba66-e1c29b40a2f3
 # ╠═08483689-b2f1-452d-960d-d1b9d5eced0e
 # ╠═c99daf88-782e-441c-9c0f-8fa0f554df36
-# ╠═6c95df8d-dffb-44b2-8788-afe11c710079
+# ╟─6c95df8d-dffb-44b2-8788-afe11c710079
+# ╟─d7b6222a-d56a-4aa0-828b-95f72a5a9e50
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
