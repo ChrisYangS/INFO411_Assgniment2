@@ -16,7 +16,7 @@ md"""
 """
 
 # ╔═╡ fe85a779-913d-4dc9-a9a8-405fa92ff0a3
-md"#### Part 1 - Random Forest Modeling"
+md"#### Part 1 - Random Forest Modelling"
 
 # ╔═╡ 3ee868db-1074-4ece-868f-79055abc7ca3
 DecisionTreeRegressor = @load DecisionTreeRegressor pkg=DecisionTree verbosity=0
@@ -31,7 +31,7 @@ begin
 end
 
 # ╔═╡ bb387e7f-5d50-4f88-b0bb-7ac21d4f0f8b
-md"Below is the swizerland output type: we can see there are 5 different outcome categories (from 0 to 4)"
+md"Below is the switzerland output type: we can see there are 5 different outcome categories (from 0 to 4)"
 
 # ╔═╡ b5c57add-2722-4f2e-afdb-4a40247d8f59
 unique(df_ds2_switzerland_clean.num)
@@ -50,15 +50,15 @@ unique(df_ds2_va_clean.num)
 
 # ╔═╡ 02259867-0ccc-4302-8fba-b92420f34208
 md"Based on above potential output analysis, we can make the following conclusions:
-- both switzerland and va dataset's ouctome are 5 different categorical data
+- both switzerland and va dataset's outcome are 5 different categorical data
 - hungarian dataset has only two different outcomes, which can be treated as boolean value.
 "
 
 # ╔═╡ 63b3f4c9-52b9-48de-899d-efc13628d73d
 md"
-The following codes will build machine learning model by Ranndom Forest Regression.
+The following codes will build machine learning model by Random Forest Regression.
 
-We first choose training dataset with its coresponding outcome flags.
+We first choose training dataset with its corresponding outcome flags.
 
 "
 
@@ -71,7 +71,7 @@ begin
 end
 
 # ╔═╡ c3d2ae16-8ace-4af6-8e8b-9ce341cce81a
-md"Split the traininig and testing data following by 80% and 20% ratio."
+md"Split the training and testing data following by 80% and 20% ratio."
 
 # ╔═╡ 59bbc8f7-5bcc-4930-b85b-a2e8b6fd1fa9
 begin
@@ -94,7 +94,7 @@ begin
 end
 
 # ╔═╡ 9ab197da-edcb-4ff6-b747-d9cea4f2f006
-md"We then get the correspoding RMS value based on different depth and subfeature values."
+md"We then get the corresponding RMS value based on different depth and subfeature values."
 
 # ╔═╡ f1cee6fc-ce9c-41b3-bf92-4bba47b4e2f0
 begin
@@ -105,7 +105,7 @@ begin
 end
 
 # ╔═╡ 8f862bcc-f2f6-403b-ad68-6c5bd364416c
-md"Below is the heatmap showing RMS values during the auto tunning test among different subfeatures and max depth:"
+md"Below is the heatmap showing RMS values during the auto tuning test among different subfeatures and max depth:"
 
 # ╔═╡ 0d1f803b-4017-4251-87d8-ba10f0f83116
 begin
@@ -119,11 +119,11 @@ end
 
 # ╔═╡ 1ea8b886-a204-492d-9b5f-3cbce49f423e
 md"""
-Based on the automatic tunning result, my best confisgurationg setting will be:
+Based on the automatic tuning result, my best configuration setting will be:
 
 *$(rep.best_history_entry.model)*
 
-Based on this best tunning set, we are expected to have optimal RMS: *$(round(rep.best_history_entry.measurement[1], digits = 5))*
+Based on this best tuning set, we are expected to have optimal RMS: *$(round(rep.best_history_entry.measurement[1], digits = 5))*
 """
 
 # ╔═╡ 733f3ad7-5069-468a-96f0-ad8897353a76
@@ -143,7 +143,7 @@ begin
 end
 
 # ╔═╡ 08aebf52-2bc6-4691-8375-f8d5afa184d1
-md"We then calcualte the best accuracy rate for Swizerland dataset:"
+md"We then calculate the best accuracy rate for Switzerland dataset:"
 
 # ╔═╡ e41571be-44b3-4b67-a65d-a7febba4fa2e
 begin
@@ -200,7 +200,7 @@ model_hug,X_hug, y_hug, train_hug, test_hug= find_best_RF_model(df_ds2_hungarian
 
 # ╔═╡ 035d4673-9f08-47c7-8dcf-60914809c8a4
 md"""
-Based on the automatic tunning result from hugarian dataset, my best confisgurationg setting will be:
+Based on the automatic tuning result from hungarian dataset, my best configuration setting will be:
 
 *$(model_hug)*
 """
@@ -228,7 +228,7 @@ model_va,X_va, y_va, train_va, test_va = find_best_RF_model(df_ds2_va_clean, 5);
 
 # ╔═╡ 0335421f-34bc-4ecf-8e33-9d5833bbf141
 md"""
-Based on the automatic tunning result from va dataset, my best confisgurationg setting will be:
+Based on the automatic tuning result from va dataset, my best configuration setting will be:
 
 *$(model_va)*
 """
@@ -247,12 +247,12 @@ begin
 end
 
 # ╔═╡ 80a5776f-5a29-4268-ad66-625d3acc91fc
-md"No surprise, the random forest tree regression does not work well for hugarian datasets due to mutiple outcomes.
+md"No surprise, the random forest tree regression does not work well for hungarian datasets due to multiple outcomes.
 
-**Conclusion**: Random forest can be used for both regression and classification tasks. However, when it comes to data that includes categorical variables with different numbers of levels, random forests are biased in favor of those attributes with more levels. Therefore, the variable importance scores from random forest are not reliable for this type of data"
+**Conclusion**: Random forest can be used for both regression and classification tasks. However, when it comes to data that includes categorical variables with different numbers of levels, random forests are biased in favour of those attributes with more levels. Therefore, the variable importance scores from random forest are not reliable for this type of data"
 
 # ╔═╡ a5a50e0e-cbe6-440b-8c0a-79d227091efd
-md"#### Part 2 - Deceision Tree Classification Modeling"
+md"#### Part 2 - Decision Tree Classification Modelling"
 
 # ╔═╡ 6d362a80-2256-4971-a734-51eaa700da8d
 DTree = @load DecisionTreeClassifier pkg=DecisionTree;
@@ -297,7 +297,7 @@ summary_text_hug,train_hug1, test_hug1, X_hug1, y_hug1, plot_hug1= find_best_DT_
 plot_hug1
 
 # ╔═╡ 5b87a994-8d58-413c-8994-26475b053110
-summary_text_sw, train_sw1, test_sw1, X_sw1, y_sw1, plot_sw1= find_best_DT_model(df_ds2_switzerland_clean,1:20, "Swizerland");
+summary_text_sw, train_sw1, test_sw1, X_sw1, y_sw1, plot_sw1= find_best_DT_model(df_ds2_switzerland_clean,1:20, "Switzerland");
 
 # ╔═╡ a4b2e2ee-b873-4520-9203-ebdb5d6b9e73
 plot_sw1
@@ -310,11 +310,11 @@ plot_va1
 
 # ╔═╡ d107fc58-32bc-4362-bc99-ec5a29df44ef
 md"""
-When change the training model from regression to classification, and using the Deceision Tree model the accuracy rate got significantly increased. Below is the summary of max_depth of decision tree model should be used for all three different dataset:
+When change the training model from regression to classification, and using the Decision Tree model the accuracy rate got significantly increased. Below is the summary of max_depth of decision tree model should be used for all three different dataset:
  - $summary_text_hug
  - $summary_text_sw
  - $summary_text_va
-The main reasons that max_depth parameter between Hugarian Swizerland&VA dataset is that models are having different number of categorical outcomes.
+The main reasons that max_depth parameter between Hungarian Switzerland & VA dataset is that models are having different number of categorical outcomes.
 """
 
 # ╔═╡ 60a641f1-f8e3-439b-835c-a8bdccf98b52
@@ -322,7 +322,7 @@ md"""
 ##### This is still not very good testing results. We suspect that overwritten missing value at Data imputation may generate bias data that does not refect true data pattern.
 
 ---
-We will try to re-train dataset by removing any columns have more than 40% of missing datab. Based on the summary table in Data imputation, the following columns are excluded:
+We will try to re-train dataset by removing any columns have more than 40% of missing data. Based on the summary table in Data imputation, the following columns are excluded:
 - ca
 - thal
 - slope
@@ -345,7 +345,7 @@ summary_text_hug_v2,train_hug1_v2, test_hug1_v2, X_hug1_v2, y_hug1_v2, plot_hug1
 plot_hug1_v2
 
 # ╔═╡ 82261d76-3c66-48ab-98ea-49e1127a95de
-summary_text_sw_v2, train_sw1_v2, test_sw1_v2, X_sw1_v2, y_sw1_v2, plot_sw1_v2= find_best_DT_model(df_ds2_switzerland_clean_v2,1:20, "Swizerland");
+summary_text_sw_v2, train_sw1_v2, test_sw1_v2, X_sw1_v2, y_sw1_v2, plot_sw1_v2= find_best_DT_model(df_ds2_switzerland_clean_v2,1:20, "Switzerland");
 
 # ╔═╡ dec32b93-c5d5-4214-a06b-97b2bc2d5cd6
 plot_sw1_v2
@@ -358,12 +358,12 @@ plot_va1_v2
 
 # ╔═╡ fd148d18-18bd-4a2f-bf42-94b5dd80139a
 md"""
-Even we removed columns have many missing values doe not change the improvement much, which indicates data imputationd using knn in the begining has no impact to impair the predication accuracy.
+Even we removed columns have many missing values doe not change the improvement much, which indicates data imputation using knn in the beginning has no impact to impair the predication accuracy.
 
 	"""
 
 # ╔═╡ d57845ac-e4b7-40b4-b47f-af850199bb67
-md"#### As we know the potential category outcome of each type of dataset, we may can use KNN method as we aleady know K."
+md"#### As we know the potential category outcome of each type of dataset, we may can use KNN method as we already know K."
 
 # ╔═╡ abb0d09b-3825-4056-8b8a-d28b1f1e87f4
 function KNN_predict(K, X, y, train, test, dataset_name)
@@ -371,20 +371,20 @@ function KNN_predict(K, X, y, train, test, dataset_name)
 	knnc_mach = machine(knnc, X, y) 
 	MLJ.fit!(knnc_mach, rows=train) #training the machine by feeding training data.
 	ypred = predict_mode(knnc_mach, rows=test)
-	println("The accturacy of dataset $dataset_name in using KNN model is $(accuracy(ypred, y[test])) when K equals to $K")
+	println("The accuracy of dataset $dataset_name in using KNN model is $(accuracy(ypred, y[test])) when K equals to $K")
 end
 
 # ╔═╡ 02e024a1-d72b-4ac7-ba66-e1c29b40a2f3
 KNN_predict(2, X_hug1, y_hug1, train_hug1, test_hug1, "Hungarian");
 
 # ╔═╡ 08483689-b2f1-452d-960d-d1b9d5eced0e
-KNN_predict(5, X_sw1, y_sw1, train_sw1, test_sw1, "Swizerland");
+KNN_predict(5, X_sw1, y_sw1, train_sw1, test_sw1, "Switzerland");
 
 # ╔═╡ c99daf88-782e-441c-9c0f-8fa0f554df36
 KNN_predict(5, X_va1, y_va1, train_va1, test_va1, "Va");
 
 # ╔═╡ 6c95df8d-dffb-44b2-8788-afe11c710079
-md"As we can see, KNN does not have good prediction on boolean outcome, but better performance on mutiple categorical output than as Decision Trees"
+md"As we can see, KNN does not have good prediction on boolean outcome, but better performance on multiple categorical output than as Decision Trees"
 
 # ╔═╡ d7b6222a-d56a-4aa0-828b-95f72a5a9e50
 md"""
@@ -392,7 +392,7 @@ md"""
 **Recommendations**:
 	
 	It seems the prediction accuracy get improved by using classification model than regression model. 
-	Model Selection: Decision Tree Classfication, an KNN both have better performance than the Random Forest Tree regression mainly because they are better for categorical classfication predictions. In Decision Tree model, prediction accuracy for boolean output dataset is better than categorical outcome, but in KNN, prediction accuracy for mutiple mategory dataset is better than Decesion Tree sence we arealdy know K.
+	Model Selection: Decision Tree Classification, an KNN both have better performance than the Random Forest Tree regression mainly because they are better for categorical classification predictions. In Decision Tree model, prediction accuracy for boolean output dataset is better than categorical outcome, but in KNN, prediction accuracy for multiple category dataset is better than Decision Tree since we already know K.
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001

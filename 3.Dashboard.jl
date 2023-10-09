@@ -81,13 +81,13 @@ begin
 	
 	pie_cp = generate_pie_chart("Chest Pain Type \n(1 = typical angina, 2 = atypical angina, \n3 = non-anginal pain, 4 = asymptomatic) ",uppercasefirst(split(split(location,"/")[end],"_")[2]),df_ds1.cp)
 	
-	restecg = generate_pie_chart("Resting Electrocardiographi Results \n(0 = normal, 1 = having ST-T wave abnormality,\n2 = showing probable or definite left\n ventricular hypertrophy by Estes' criteria) ",uppercasefirst(split(split(location,"/")[end],"_")[2]),df_ds1.restecg)
+	restecg = generate_pie_chart("Resting Electrocardiograph Results \n(0 = normal, 1 = having ST-T wave abnormality,\n2 = showing probable or definite left\n ventricular hypertrophy by Estes' criteria) ",uppercasefirst(split(split(location,"/")[end],"_")[2]),df_ds1.restecg)
 
 	slope = generate_pie_chart("Slope of the peak exercise ST segment \n(1 = upsloping, 2 =flat, 3 = downsloping) ",uppercasefirst(split(split(location,"/")[end],"_")[2]),df_ds1.slope)
 
-	thal = generate_pie_chart("thal (3 = normal, 6 = fixed defect,\n7 = reversable defect) ",uppercasefirst(split(split(location,"/")[end],"_")[2]),df_ds1.thal)
+	thal = generate_pie_chart("thal (3 = normal, 6 = fixed defect,\n7 = reversible defect) ",uppercasefirst(split(split(location,"/")[end],"_")[2]),df_ds1.thal)
 	@info PlutoRunner.currently_running_cell_id
-	Plots.plot(pie_heart_disease,pie_sex,pie_cp,restecg,slope,thal, layout=(3,2), spacing=10)
+	Plots.plot(pie_heart_disease,pie_sex,pie_cp,restecg,slope,thal, layout=(3,2), spacing=10,size=(800, 1000))
 end
 
 # ╔═╡ 05cc6b23-7c8d-4604-bf20-fa9ded36a579
@@ -215,7 +215,7 @@ function find_best_DT_model(df,n_trees,dataset_name, training_ratio)
     end
     
     Plots.plot(n_trees, train_arr, label="Training")
-    p_acc = Plots.plot!(n_trees, test_arr, label="Tesing", title="Decesion Tree Training Accuracy on $dataset_name Dataset where depth is $(last(n_trees))")
+    p_acc = Plots.plot!(n_trees, test_arr, label="Testing", title="Decision Tree Training Accuracy on $dataset_name Dataset where depth is $(last(n_trees))")
 	summary_text = "The best training accuracy rate for $dataset_name data set is $(round(best_testing_acc_rate*100, digits=3))% where the max_depth is $best_testing_depth"
 	println(summary_text)
 	return summary_text, train, test, X, y, p_acc
@@ -224,14 +224,14 @@ end
 # ╔═╡ 1a19f2c6-ce22-40f7-b53f-becfee24f04b
 begin
 	@info PlutoRunner.currently_running_cell_id
-	md"### Decesion Tree Training with depth is $(iteration) and $(training_ratio)% of data is used for training"
+	md"### Decision Tree Training with depth is $(iteration) and $(training_ratio)% of data is used for training"
 end
 
 # ╔═╡ b23587cf-61d4-401f-9d89-901e0f437988
 summary_text_hug,train_hug1, test_hug1, X_hug1, y_hug1, plot_hug1 = find_best_DT_model(df_ds2_hungarian_clean,1:iteration, "Hungarian",training_ratio/100);
 
 # ╔═╡ 5845875e-3154-4553-b02e-0943eabc28c5
-summary_text_sw, train_sw1, test_sw1, X_sw1, y_sw1, plot_sw1= find_best_DT_model(df_ds2_switzerland_clean,1:iteration, "Swizerland",training_ratio/100);
+summary_text_sw, train_sw1, test_sw1, X_sw1, y_sw1, plot_sw1= find_best_DT_model(df_ds2_switzerland_clean,1:iteration, "Switzerland",training_ratio/100);
 
 # ╔═╡ e0fc4cbf-21e3-4708-8679-3c1118453075
 summary_text_va,train_va1, test_va1,X_va1, y_va1, plot_va1 = find_best_DT_model(df_ds2_va_clean,1:iteration,"VA",training_ratio/100);

@@ -11,7 +11,7 @@ using CSV, DataFrames,Plots,Statistics,PairPlots,StatsPlots
 using Impute: Interpolate, impute!,Impute, LinearAlgebra
 
 # ╔═╡ 10a7efc0-5a57-11ee-1bc0-5127788d63e8
-md"### **TASK 1** - We are use DS1 to gaim some insight on the statistical properoties of the data"
+md"### **TASK 1** - We are use DS1 to gain some insight on the statistical properties of the data"
 
 # ╔═╡ 72838820-783a-464a-88f0-d8f1fac9356a
 md"""
@@ -26,7 +26,7 @@ md"""
 
 # ╔═╡ c3dc9d0f-14da-4f54-84c1-5315fb160199
 md"""
-**Collumn attribute**
+**Column attribute**
 
 1. **age**: age in years
 2. **sex**: sex (1 = male; 0 = female)
@@ -119,7 +119,7 @@ end
 df_ds1
 
 # ╔═╡ ba136212-4d9c-4807-b024-b34e1bc35843
-md"""We then build a corrleation matrix table among those 14 columns in the dataset.
+md"""We then build a correlation matrix table among those 14 columns in the dataset.
 
 As we discussed earlier, we will only create correlation matrix for non-categorical data, which are **age**, **trestbps**(resting blood pressure), **chol**(serum cholestoral), **thalach**(maximum heart rate achieved) and **oldpeak**.
 """
@@ -183,7 +183,7 @@ from DS2:
 - processed.switzerland
 - processed.va
 
-Now,first lest let's create a dictory of column's data type based on the DS1 DataFrame.
+Now,first lest let's create a directory of column's data type based on the DS1 DataFrame.
 """
 
 # ╔═╡ 81402296-d3e1-4166-ac47-0bc899a51fd0
@@ -199,7 +199,7 @@ df_ds2_hungarian = CSV.read("./data/ds2_heart_disease/processed.hungarian.data",
 	DataFrame, 
 	#unconverted data will be igored and changed to "missing"
 	strict=false, 
-	#ignore poping up warning message
+	#ignore popping up warning message
 	silencewarnings=true)
 
 
@@ -209,7 +209,7 @@ df_ds2_switzerland = CSV.read("./data/ds2_heart_disease/processed.switzerland.da
 	DataFrame, 
 	#unconverted data will be igored and changed to "missing"
 	strict=false, 
-	#ignore poping up warning message
+	#ignore popping up warning message
 	silencewarnings=true)
 
 # ╔═╡ dcb9509c-aa05-4369-bfd8-21425403caa1
@@ -218,14 +218,14 @@ df_ds2_va = CSV.read("./data/ds2_heart_disease/processed.va.data",header=header,
 	DataFrame, 
 	#unconverted data will be igored and changed to "missing"
 	strict=false, 
-	#ignore poping up warning message
+	#ignore popping up warning message
 	silencewarnings=true)
 
 
 # ╔═╡ d0ecda7e-66bf-408d-9cff-9ce64a49bd61
 md"""Now, let's start to working on those missing values
 
-Firstly, the easist solution is to drop any record if there is any missing value in any column. Let's try to count how many of "perfect" record that there is no missing value.
+Firstly, the easiest solution is to drop any record if there is any missing value in any column. Let's try to count how many of "perfect" record that there is no missing value.
 """
 
 # ╔═╡ 87cbfcfa-c85e-4784-9baf-30ec5d7ba9ef
@@ -261,10 +261,10 @@ end
 
 # ╔═╡ 927d169d-e53b-4175-91ac-6c21a4e1a5ae
 md"""
-Based on the table above, the ca column can be droped as there is very high missing ratio applies to all dataset, and very hard to predict based on statistic characters.
-- ca in $"df_ds2_hungarian" column, due to 98.98% missing rate (only 3 valida data)
-- ca in $"df_ds2_va" column, due to 99.0% missing rate (only 2 valida data)
-- ca in $"df_ds2_switzerland" column, due to 95.3% missing rate (only 5 valida data)
+Based on the table above, the ca column can be dropped as there is very high missing ratio applies to all dataset, and very hard to predict based on statistic characters.
+- ca in $"df_ds2_hungarian" column, due to 98.98% missing rate (only 3 validate data)
+- ca in $"df_ds2_va" column, due to 99.0% missing rate (only 2 validate data)
+- ca in $"df_ds2_switzerland" column, due to 95.3% missing rate (only 5 validate data)
 """
 
 # ╔═╡ 8f88b7ea-72a7-4b45-95e1-b1901bef0979
@@ -306,16 +306,16 @@ end
 
 
 # ╔═╡ e84be9a8-7937-4cf4-a58d-83ee23678630
-md"Let's check one dataset if datatype columns are modified"
+md"Let's check one dataset if data type columns are modified"
 
 # ╔═╡ cbc2f9cd-3ffd-4ce1-a773-2c35fade2122
 df_ds2_switzerland_clean
 
 # ╔═╡ d28bc4f9-0916-425a-b42e-673d98dc4808
 md"""
-Now, below are summary table of each claeaned datasets.
+Now, below are summary table of each cleaned datasets.
 
-**Hugarian location data**
+**Hungarian location data**
 """
 
 # ╔═╡ 80280d15-6da9-4218-afc8-101fdf83884a
@@ -335,7 +335,7 @@ select!(describe(df_ds2_va_clean), Not(:eltype))
 
 # ╔═╡ 80c4ba91-47f3-4b67-94ef-1a2ec6c7108d
 md"""
-At end of EDA, we are exporting those "cleaned data" for modeling exercises. 
+At end of EDA, we are exporting those "cleaned data" for modelling exercises. 
 """
 
 # ╔═╡ ebb7705e-9ceb-4552-80c8-6a246e252fbc
