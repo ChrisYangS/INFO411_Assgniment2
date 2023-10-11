@@ -183,11 +183,8 @@ end
 # ╔═╡ cab29aee-aa7e-4ba5-b849-305cb8648009
 begin
 	@info PlutoRunner.currently_running_cell_id
-	@bind training_ratio Select([30,40,50,60,70,80,90], default=70)
+	@bind training_ratio Select([30,40,50,60,70,80,90], default=80)
 end
-
-# ╔═╡ 2497c22e-864b-4f1f-a172-56a1fb24639b
-training_ratio
 
 # ╔═╡ baf5fd5c-aa02-41c1-8fa5-6f0f69f57bef
 function find_best_DT_model(df,n_trees,dataset_name, training_ratio)
@@ -2844,10 +2841,9 @@ version = "1.4.1+1"
 # ╠═1c46ef49-43f4-4d3a-8873-2505d5584003
 # ╠═9c329f2e-1f50-45a9-b521-8c41f6573dde
 # ╟─16ae59d8-4a3b-4514-ad2f-eaadfff86fea
-# ╠═d07cb60c-5436-4005-918e-853330450bc3
+# ╟─d07cb60c-5436-4005-918e-853330450bc3
 # ╟─7acc3e32-73d9-4cbc-a498-ee823a447781
-# ╠═cab29aee-aa7e-4ba5-b849-305cb8648009
-# ╠═2497c22e-864b-4f1f-a172-56a1fb24639b
+# ╟─cab29aee-aa7e-4ba5-b849-305cb8648009
 # ╠═baf5fd5c-aa02-41c1-8fa5-6f0f69f57bef
 # ╠═1a19f2c6-ce22-40f7-b53f-becfee24f04b
 # ╠═b23587cf-61d4-401f-9d89-901e0f437988

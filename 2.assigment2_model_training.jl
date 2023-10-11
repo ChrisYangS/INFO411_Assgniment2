@@ -16,10 +16,10 @@ md"""
 """
 
 # ╔═╡ fe85a779-913d-4dc9-a9a8-405fa92ff0a3
-md"#### Part 1 - Random Forest Modelling"
+md"#### Part 1 - Random Forest Tree Regression Modelling"
 
 # ╔═╡ 3ee868db-1074-4ece-868f-79055abc7ca3
-DecisionTreeRegressor = @load DecisionTreeRegressor pkg=DecisionTree verbosity=0
+DecisionTreeRegressor = @load RandomForestRegressor pkg=DecisionTree verbosity=0
 
 # ╔═╡ 8b46940e-5590-470a-9f41-efea0f5cabe9
 begin
@@ -28,6 +28,19 @@ begin
 	df_ds2_hungarian_clean = CSV.File("./cleaned_data/ds2_hungarian_clean.csv",header=true, delim=',') |> DataFrame
 
 	df_ds2_va_clean = CSV.File("./cleaned_data/ds2_va_clean.csv",header=true, delim=',') |> DataFrame
+end
+
+# ╔═╡ 9ffe16f6-1c8f-4540-a41e-570c18cf87bb
+begin
+	header = ["age", "sex","cp","trestbps","chol","fbs","restecg","thalach","exang","oldpeak","slope","ca","thal","num"]
+	df_ds1 = CSV.read("./data/ds1_statlog_heart.data.txt",header=header, DataFrame)
+	numerical_columns =[4,5,8,10]
+	for i in 1: size(df_ds1)[2]
+	    if !(i in numerical_columns)
+			df_ds1[!,i] = convert.(Int64, df_ds1[:,i])
+			println("Change column $(names(df_ds1)[i]) to Integr!")
+		end
+	end
 end
 
 # ╔═╡ bb387e7f-5d50-4f88-b0bb-7ac21d4f0f8b
@@ -105,7 +118,7 @@ begin
 end
 
 # ╔═╡ 8f862bcc-f2f6-403b-ad68-6c5bd364416c
-md"Below is the heatmap showing RMS values during the auto tuning test among different subfeatures and max depth:"
+md"The heatmap presented below illustrates the Root Mean Square (RMS) values obtained during the auto-tuning test across various combinations of subfeatures and maximum depth. It's apparent that there is no discernible pattern indicating a consistent increase in RMS concerning changes in Max Depth and the number of subfeatures. Additionally, regions with lower RMS values, signifying better performance, do not exhibit uniformity."
 
 # ╔═╡ 0d1f803b-4017-4251-87d8-ba10f0f83116
 begin
@@ -151,31 +164,10 @@ begin
 	accuracy(mode.(y_pred),y[test_sw])
 end
 
-# ╔═╡ ee6823c6-ded9-44a9-b4de-0e2600378b76
-function draw_accuracy_curve(X,y, train, test)	
-	t1accu_tr = []
-	t1accu_te = []
-	
-	for depth in 1:25
-		tree_T1 = DecisionTreeRegressor(max_depth=depth)
-		m = machine(decision_tree, X, y)
-	    MLJ.fit!(m,rows=train, verbosity=0)
-	    push!(t1accu_tr, accuracy(mode.(MLJ.predict(m, rows=train)),y[train]))
-	    push!(t1accu_te, accuracy(mode.(MLJ.predict(m, rows=test)),y[test]))
-	end
-	
-	Plots.plot(t1accu_tr, label="Training", xlabel="Tree Depth", ylabel="Accuracy", title="Accuracy vs. Tree Depth")
-	Plots.plot!(t1accu_te, label="Testing", xlabel="Tree Depth", ylabel="Accuracy", title="Accuracy vs. Tree Depth")
-	
-end
-
-# ╔═╡ 9158ca69-75ce-4d96-b967-7ec19e30aae8
-draw_accuracy_curve(X,y, train_sw, test_sw)
-
 # ╔═╡ e8ef7f48-b178-4ea4-9ce4-acbe9763928c
-md"The Random Forest regression model is not providing an optimal fit for the Switzerland dataset when it comes to making predictions. A primary challenge arises from the model's limited ability to handle categorical data effectively. To address this limitation, we have implemented a workaround in our prediction validation code: we round the predicted floating-point values to the nearest integer. This approach effectively converts the continuous predictions into pseudo-categorical data, allowing us to better assess the model's performance and alignment with the expected output.
+md"The Random Forest regression model appears to be less effective in providing accurate predictions for the Switzerland dataset. A key challenge stems from the model's inherent limitations in handling categorical data. To mitigate this issue, we've incorporated a workaround into our prediction validation process: we round the predicted floating-point values to the nearest integer. This strategy effectively transforms the continuous predictions into pseudo-categorical data, enabling a more comprehensive evaluation of the model's performance and its alignment with the expected outcomes.
 
-Let's try more testing on other dataset using the same method."
+Now, let's extend this testing approach to other datasets for further evaluation."
 
 # ╔═╡ acd618ed-2dd5-467a-aa7b-6184fd6585bd
 function find_best_RF_model(df,n_trees)
@@ -219,9 +211,9 @@ begin
 end
 
 # ╔═╡ 3632465f-39e1-4117-8902-b4b165a22cfd
-md"hungarian dataset has hug improve, mainly because the output category is only boolean value, which limits the error probability.
+md"The Hungarian dataset has shown significant improvement, primarily due to its output category being limited to boolean values, which reduces error probability.
 
-Lets' try again on va data. Due to Va has 5 output unique value, the accuracy could be lower than hungarian dataset."
+Let's now reattempt the analysis on the VA dataset. Given that VA contains five unique output values, it's possible that the accuracy could be lower than that of the Hungarian dataset."
 
 # ╔═╡ 979374f4-5a96-45a3-aa6b-eaf8d93fb159
 model_va,X_va, y_va, train_va, test_va = find_best_RF_model(df_ds2_va_clean, 5); #va dataset only has 5 types of output data
@@ -284,7 +276,7 @@ function find_best_DT_model(df,n_trees,dataset_name)
     end
     
     Plots.plot(n_trees, train_arr, label="Training")
-    p = Plots.plot!(n_trees, test_arr, label="Tesing", title="Training Accuracy on $dataset_name Dataset")
+    p = Plots.plot!(n_trees, test_arr, label="Tesing", title="Training Accuracy on $dataset_name Dataset", ylabel="Accuracy", xlabel="Depth")
 	summary_text = "The best training accuracy rate for $dataset_name data set is $(round(best_testing_acc_rate*100, digits=3))% where the max_depth is $best_testing_depth"
 	println(summary_text)
 	return summary_text, train, test, X, y, p
@@ -358,7 +350,7 @@ plot_va1_v2
 
 # ╔═╡ fd148d18-18bd-4a2f-bf42-94b5dd80139a
 md"""
-Even we removed columns have many missing values doe not change the improvement much, which indicates data imputation using knn in the beginning has no impact to impair the predication accuracy.
+Even after the removal of columns containing numerous missing values, the observed improvement remains minimal. This suggests that the initial data imputation using Random Forest Regression had no discernible impact on diminishing prediction accuracy.
 
 	"""
 
@@ -371,7 +363,7 @@ function KNN_predict(K, X, y, train, test, dataset_name)
 	knnc_mach = machine(knnc, X, y) 
 	MLJ.fit!(knnc_mach, rows=train) #training the machine by feeding training data.
 	ypred = predict_mode(knnc_mach, rows=test)
-	println("The accuracy of dataset $dataset_name in using KNN model is $(accuracy(ypred, y[test])) when K equals to $K")
+	println("The accuracy of dataset $dataset_name in using KNN model is $(round(accuracy(ypred, y[test])*100,digits=3))% when K equals to $K")
 end
 
 # ╔═╡ 02e024a1-d72b-4ac7-ba66-e1c29b40a2f3
@@ -384,15 +376,31 @@ KNN_predict(5, X_sw1, y_sw1, train_sw1, test_sw1, "Switzerland");
 KNN_predict(5, X_va1, y_va1, train_va1, test_va1, "Va");
 
 # ╔═╡ 6c95df8d-dffb-44b2-8788-afe11c710079
-md"As we can see, KNN does not have good prediction on boolean outcome, but better performance on multiple categorical output than as Decision Trees"
+md"As observed, KNN demonstrates relatively weaker predictive performance on binary outcomes compared to Decision Trees classification, but it exhibits a slightly better performance when handling datasets with multiple categorical outputs."
+
+# ╔═╡ 2b6b2c8b-7cc4-4fdf-b2f3-bacba677871d
+begin
+	summary_text_ds1,train_ds1, test_ds1, X_ds1, y_ds1, plot_ds1= find_best_DT_model(df_ds1,1:20, "DS1")
+	plot_ds1;
+end
+
+# ╔═╡ ab2e0c2c-b0b1-4ab0-9ca5-4ae83f470ada
+KNN_predict(5, X_ds1, y_ds1, train_ds1, test_ds1, "DS1");
 
 # ╔═╡ d7b6222a-d56a-4aa0-828b-95f72a5a9e50
 md"""
 
-**Recommendations**:
-	
-	It seems the prediction accuracy get improved by using classification model than regression model. 
-	Model Selection: Decision Tree Classification, an KNN both have better performance than the Random Forest Tree regression mainly because they are better for categorical classification predictions. In Decision Tree model, prediction accuracy for boolean output dataset is better than categorical outcome, but in KNN, prediction accuracy for multiple category dataset is better than Decision Tree since we already know K.
+**Conclusion**:
+
+- The results indicate that utilizing a classification model yields improved prediction accuracy compared to a regression model.
+
+- Regarding model selection, both the Decision Tree and KNN Classification models outperform the Random Forest Regression model, particularly in cases involving categorical classification predictions.
+
+- Evaluating the performance across datasets from Switzerland, Hungary, and VA, it's evident that the Decision Tree Classification model excels when dealing with binary output datasets. Conversely, the KNN model demonstrates superior performance when dealing with datasets that contain multiple categories, given that K, the number of neighbors, is known.
+
+- Notably, lower accuracy is observed in the Switzerland and Hungary datasets, which both have five categorical output classes. This lower accuracy is primarily attributed to the presence of missing values in the input data. Interestingly, neither replacing missing values via imputation algorithms nor dropping columns with significant missing values results in a significant increase in accuracy.
+
+- A noteworthy improvement in accuracy is observed when using clean data from the DS1 dataset, which yields an accuracy rate of 84%.
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -2219,6 +2227,7 @@ version = "1.4.1+1"
 # ╠═1dee4f7b-7c32-44e4-a426-e576d0c794c6
 # ╠═3ee868db-1074-4ece-868f-79055abc7ca3
 # ╠═8b46940e-5590-470a-9f41-efea0f5cabe9
+# ╠═9ffe16f6-1c8f-4540-a41e-570c18cf87bb
 # ╟─bb387e7f-5d50-4f88-b0bb-7ac21d4f0f8b
 # ╠═b5c57add-2722-4f2e-afdb-4a40247d8f59
 # ╟─6af154e9-1d1d-447d-b154-033539127569
@@ -2242,8 +2251,6 @@ version = "1.4.1+1"
 # ╠═9f658810-72db-44d5-9eaf-95140b4e1bd2
 # ╟─08aebf52-2bc6-4691-8375-f8d5afa184d1
 # ╠═e41571be-44b3-4b67-a65d-a7febba4fa2e
-# ╠═ee6823c6-ded9-44a9-b4de-0e2600378b76
-# ╠═9158ca69-75ce-4d96-b967-7ec19e30aae8
 # ╟─e8ef7f48-b178-4ea4-9ce4-acbe9763928c
 # ╠═acd618ed-2dd5-467a-aa7b-6184fd6585bd
 # ╠═ed889ac7-d296-4f3e-8b22-743ac9c2802d
@@ -2256,7 +2263,7 @@ version = "1.4.1+1"
 # ╟─7c76d568-512a-4a76-b8aa-19d0e3b753d8
 # ╠═4f33b0d4-a5ac-4021-8e94-2b0cd70f4030
 # ╟─80a5776f-5a29-4268-ad66-625d3acc91fc
-# ╠═a5a50e0e-cbe6-440b-8c0a-79d227091efd
+# ╟─a5a50e0e-cbe6-440b-8c0a-79d227091efd
 # ╠═6d362a80-2256-4971-a734-51eaa700da8d
 # ╠═bd1d3612-e21b-4460-8512-7dfc2c6c49cc
 # ╠═a8849990-291d-4ade-9e11-356f82f380a7
@@ -2266,7 +2273,7 @@ version = "1.4.1+1"
 # ╠═81f9c5d3-61c7-4426-b2b4-36cdba1c548a
 # ╠═5189c2f0-86b4-4875-ba63-aa3a976922f6
 # ╟─d107fc58-32bc-4362-bc99-ec5a29df44ef
-# ╠═60a641f1-f8e3-439b-835c-a8bdccf98b52
+# ╟─60a641f1-f8e3-439b-835c-a8bdccf98b52
 # ╠═4993d8b4-97b4-46b9-98c5-e9cdf311ceaa
 # ╠═f18bb2ad-98f6-4314-a2e3-9e3b4c54aa71
 # ╠═4da5c114-f28b-4f2f-8a9a-4606e963cd04
@@ -2282,6 +2289,8 @@ version = "1.4.1+1"
 # ╠═08483689-b2f1-452d-960d-d1b9d5eced0e
 # ╠═c99daf88-782e-441c-9c0f-8fa0f554df36
 # ╟─6c95df8d-dffb-44b2-8788-afe11c710079
+# ╠═2b6b2c8b-7cc4-4fdf-b2f3-bacba677871d
+# ╠═ab2e0c2c-b0b1-4ab0-9ca5-4ae83f470ada
 # ╟─d7b6222a-d56a-4aa0-828b-95f72a5a9e50
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

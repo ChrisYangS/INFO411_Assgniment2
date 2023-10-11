@@ -97,7 +97,7 @@ end
 
 # ╔═╡ 1a921bb0-6189-4bb6-9d85-ada0f39254de
 begin
-	numerical_columns =[1,4,5,8,10]
+	numerical_columns =[4,5,8,10]
 	names(df_ds1)[numerical_columns]
 end
 
@@ -261,10 +261,11 @@ end
 
 # ╔═╡ 927d169d-e53b-4175-91ac-6c21a4e1a5ae
 md"""
-Based on the table above, the ca column can be dropped as there is very high missing ratio applies to all dataset, and very hard to predict based on statistic characters.
-- ca in $"df_ds2_hungarian" column, due to 98.98% missing rate (only 3 validate data)
-- ca in $"df_ds2_va" column, due to 99.0% missing rate (only 2 validate data)
-- ca in $"df_ds2_switzerland" column, due to 95.3% missing rate (only 5 validate data)
+Based on the table provided, it is advisable to drop the 'ca' column due to an exceptionally high missing ratio that is consistent across all datasets. This column is particularly challenging to predict based on statistical characteristics. Here are the specific missing rates for 'ca' in each dataset:
+
+- In the $"df_ds2_hungarian" column, there is a 98.98% missing rate, with only 3 valid data points.
+- In the $"df_ds2_va" column, there is a 99.0% missing rate, with only 2 valid data points.
+- In the $"df_ds2_switzerland" column, there is a 95.3% missing rate, with only 5 valid data points.
 """
 
 # ╔═╡ 8f88b7ea-72a7-4b45-95e1-b1901bef0979
@@ -313,17 +314,6 @@ begin
 			push!(cleaned_df_list,select!(df1,Not(:ca)))
 		end
 end
-
-# ╔═╡ 63a510bf-cd9d-4cab-9c6c-d1f0ba6216b0
-# Impute.impute!(M, Interpolate(); dims=1)
-# begin
-# 	cleaned_df_list=[]
-# 	for df in df_list
-# 		data = allowmissing(reshape(sin.(1:20), 5, 4)); data[[2, 3, 7, 9, 13, 19]] .= missing;data
-# 		df1 = DataFrame(Impute.knn(k=1, Matrix(df); dims=:cols), header)
-# 		
-# 	end
-# end
 
 # ╔═╡ 47060d93-b2d9-4b2b-8aa3-9226b1dfcc89
 begin
@@ -375,11 +365,6 @@ md"**VA location data**"
 
 # ╔═╡ f88630cc-1a5a-4942-93eb-f00c7ce2d260
 select!(describe(df_ds2_va_clean), Not(:eltype))
-
-# ╔═╡ 80c4ba91-47f3-4b67-94ef-1a2ec6c7108d
-md"""
-At end of EDA, we are exporting those "cleaned data" for modelling exercises. 
-"""
 
 # ╔═╡ ebb7705e-9ceb-4552-80c8-6a246e252fbc
 begin
@@ -2709,11 +2694,10 @@ version = "1.4.1+0"
 # ╠═87cbfcfa-c85e-4784-9baf-30ec5d7ba9ef
 # ╟─43dc0b47-46d8-4bd9-8df0-695eade5775f
 # ╠═93cb65e4-8345-4682-ba7b-bde12c376511
-# ╟─927d169d-e53b-4175-91ac-6c21a4e1a5ae
+# ╠═927d169d-e53b-4175-91ac-6c21a4e1a5ae
 # ╟─8f88b7ea-72a7-4b45-95e1-b1901bef0979
 # ╠═31d65c24-005b-4f85-b1c8-c12ac0df4ff0
 # ╠═8a2b9896-a660-4081-9517-97898b137822
-# ╠═63a510bf-cd9d-4cab-9c6c-d1f0ba6216b0
 # ╠═47060d93-b2d9-4b2b-8aa3-9226b1dfcc89
 # ╠═a85eb71b-df02-4c08-bd24-6e8b3a1d8ac7
 # ╠═e84be9a8-7937-4cf4-a58d-83ee23678630
@@ -2724,7 +2708,6 @@ version = "1.4.1+0"
 # ╠═fc6ed8d3-eff5-41ff-b8f4-8c8ad443fd1e
 # ╟─51b9d71c-2088-42c6-846a-e0cf5aac4e5e
 # ╠═f88630cc-1a5a-4942-93eb-f00c7ce2d260
-# ╟─80c4ba91-47f3-4b67-94ef-1a2ec6c7108d
 # ╠═ebb7705e-9ceb-4552-80c8-6a246e252fbc
 # ╟─4bcb9603-f205-481a-847a-c6b9d056db5a
 # ╟─00000000-0000-0000-0000-000000000001
