@@ -34,7 +34,7 @@ end
 # ╔═╡ 4f3cda1a-e424-4d80-8932-ee00c694e83c
 begin
 	@info PlutoRunner.currently_running_cell_id
-	selection = @bind location Select(["./cleaned_data/ds2_switzerland_clean.csv"=>"Switzerland", "./cleaned_data/ds2_hungarian_clean.csv"=>"Hungarian","./cleaned_data/ds2_va_clean.csv"=>"VA"], default="./cleaned_data/ds2_va_clean.csv")
+	selection = @bind location Select(["./cleaned_data/ds1_clean.csv"=>"DS1" ,"./cleaned_data/ds2_switzerland_clean.csv"=>"Switzerland", "./cleaned_data/ds2_hungarian_clean.csv"=>"Hungarian","./cleaned_data/ds2_va_clean.csv"=>"VA"], default="./cleaned_data/ds1_clean.csv")
 end
 
 # ╔═╡ a27f285a-fdc9-4aac-9abd-2316479c4843
@@ -42,7 +42,7 @@ begin
 	header = ["age", "sex","cp","trestbps","chol","fbs","restecg","thalach","exang","oldpeak","slope","thal","num"]
 	df_ds1 = CSV.File(location,header=true, delim=',') |> DataFrame
 	ds1 = Matrix(df_ds1)
-	X_ds1 = ds1'
+	X_ds1 = ds1';
 end
 
 # ╔═╡ c3228406-1ffc-4979-a712-47a0f5a6300b
@@ -157,33 +157,35 @@ begin
 	df_ds2_hungarian_clean = CSV.File("./cleaned_data/ds2_hungarian_clean.csv",header=true, delim=',') |> DataFrame
 
 	df_ds2_va_clean = CSV.File("./cleaned_data/ds2_va_clean.csv",header=true, delim=',') |> DataFrame
+	
+	df_ds1_clean = CSV.File("./cleaned_data/ds1_clean.csv",header=true, delim=',') |> DataFrame
 end
 
 # ╔═╡ 9c329f2e-1f50-45a9-b521-8c41f6573dde
 DTree = @load DecisionTreeClassifier pkg=DecisionTree;
 
-# ╔═╡ 16ae59d8-4a3b-4514-ad2f-eaadfff86fea
-begin
-	@info PlutoRunner.currently_running_cell_id
-	md"#### Please select Max Depth Value"
-end
-
-# ╔═╡ d07cb60c-5436-4005-918e-853330450bc3
-begin
-	@info PlutoRunner.currently_running_cell_id
-	@bind iteration Slider(1:30, default=10)
-end
-
 # ╔═╡ 7acc3e32-73d9-4cbc-a498-ee823a447781
 begin
 	@info PlutoRunner.currently_running_cell_id
-	md"### Please select % of data used for training"
+	md"##### Please select % of data used for training"
 end
 
 # ╔═╡ cab29aee-aa7e-4ba5-b849-305cb8648009
 begin
 	@info PlutoRunner.currently_running_cell_id
 	@bind training_ratio Select([30,40,50,60,70,80,90], default=80)
+end
+
+# ╔═╡ 16ae59d8-4a3b-4514-ad2f-eaadfff86fea
+begin
+	@info PlutoRunner.currently_running_cell_id
+	md"##### Please select Max Depth Value"
+end
+
+# ╔═╡ d07cb60c-5436-4005-918e-853330450bc3
+begin
+	@info PlutoRunner.currently_running_cell_id
+	@bind iteration Slider(1:30, default=6)
 end
 
 # ╔═╡ baf5fd5c-aa02-41c1-8fa5-6f0f69f57bef
@@ -211,8 +213,11 @@ function find_best_DT_model(df,n_trees,dataset_name, training_ratio)
         push!(test_arr, testing_accuracy)
     end
     
-    Plots.plot(n_trees, train_arr, label="Training")
-    p_acc = Plots.plot!(n_trees, test_arr, label="Testing", title="Decision Tree Training Accuracy on $dataset_name Dataset where depth is $(last(n_trees))")
+    Plots.plot(n_trees, train_arr, label="Training", titlefontsize=10)
+	xlabel!("Max Depth", fontsize=8)
+	ylabel!("Accuracy", fontsize=8)
+	
+    p_acc = Plots.plot!(n_trees, test_arr, label="Testing", title="Decision Tree Training Accuracy \non $dataset_name Dataset where depth is $(last(n_trees))")
 	summary_text = "The best training accuracy rate for $dataset_name data set is $(round(best_testing_acc_rate*100, digits=3))% where the max_depth is $best_testing_depth"
 	println(summary_text)
 	return summary_text, train, test, X, y, p_acc
@@ -233,10 +238,13 @@ summary_text_sw, train_sw1, test_sw1, X_sw1, y_sw1, plot_sw1= find_best_DT_model
 # ╔═╡ e0fc4cbf-21e3-4708-8679-3c1118453075
 summary_text_va,train_va1, test_va1,X_va1, y_va1, plot_va1 = find_best_DT_model(df_ds2_va_clean,1:iteration,"VA",training_ratio/100);
 
+# ╔═╡ 7a4a8288-f8ee-4410-ba2a-535fa3d13802
+summary_text_ds1,train_ds1, test_ds1,X_ds1_clean, y_ds1, plot_ds1 = find_best_DT_model(df_ds1_clean,1:iteration,"VA",training_ratio/100);
+
 # ╔═╡ 2bb84565-1197-40e9-8306-91f8af957e45
 begin
 	@info PlutoRunner.currently_running_cell_id
-	Plots.plot(plot_hug1,plot_sw1,plot_va1, layout=(3,1))
+	Plots.plot(plot_hug1,plot_sw1,plot_va1,plot_ds1, layout=(2,2))
 end
 
 # ╔═╡ d83bd85f-af90-43f4-87ac-394d0995f995
@@ -2825,7 +2833,7 @@ version = "1.4.1+1"
 # ╔═╡ Cell order:
 # ╟─ae7ce2f8-6049-11ee-0503-3945f47fcd8b
 # ╠═af25dd2a-09e9-4e28-9779-3f43358d77e4
-# ╠═4f3cda1a-e424-4d80-8932-ee00c694e83c
+# ╟─4f3cda1a-e424-4d80-8932-ee00c694e83c
 # ╠═a27f285a-fdc9-4aac-9abd-2316479c4843
 # ╠═c3228406-1ffc-4979-a712-47a0f5a6300b
 # ╠═50cfa07a-53c8-4b04-a190-e936f4cfac51
@@ -2840,22 +2848,23 @@ version = "1.4.1+1"
 # ╠═d4e8cf3f-65c7-4d40-9203-79a3e7ab0ec7
 # ╠═1c46ef49-43f4-4d3a-8873-2505d5584003
 # ╠═9c329f2e-1f50-45a9-b521-8c41f6573dde
-# ╟─16ae59d8-4a3b-4514-ad2f-eaadfff86fea
-# ╟─d07cb60c-5436-4005-918e-853330450bc3
 # ╟─7acc3e32-73d9-4cbc-a498-ee823a447781
 # ╟─cab29aee-aa7e-4ba5-b849-305cb8648009
+# ╟─16ae59d8-4a3b-4514-ad2f-eaadfff86fea
+# ╟─d07cb60c-5436-4005-918e-853330450bc3
 # ╠═baf5fd5c-aa02-41c1-8fa5-6f0f69f57bef
 # ╠═1a19f2c6-ce22-40f7-b53f-becfee24f04b
 # ╠═b23587cf-61d4-401f-9d89-901e0f437988
 # ╠═5845875e-3154-4553-b02e-0943eabc28c5
 # ╠═e0fc4cbf-21e3-4708-8679-3c1118453075
+# ╠═7a4a8288-f8ee-4410-ba2a-535fa3d13802
 # ╠═2bb84565-1197-40e9-8306-91f8af957e45
 # ╟─d83bd85f-af90-43f4-87ac-394d0995f995
 # ╠═bc3d4ee0-f8bc-4e99-980f-5df22160c10c
-# ╟─3c08ada2-5dbb-4497-b048-5f0b0d0b7c67
-# ╟─657dbf8b-281f-4b55-871a-d4f144abf208
-# ╟─2ea40ed4-00ab-4461-997a-f9ae23f1ab62
-# ╟─12601def-f586-4490-a969-8e74007c172b
+# ╠═3c08ada2-5dbb-4497-b048-5f0b0d0b7c67
+# ╠═657dbf8b-281f-4b55-871a-d4f144abf208
+# ╠═2ea40ed4-00ab-4461-997a-f9ae23f1ab62
+# ╠═12601def-f586-4490-a969-8e74007c172b
 # ╟─615b197b-3abb-4d59-ab7d-ff4de0a3a09e
 # ╟─314ebc9c-776e-4c9c-ad99-4a51055ba291
 # ╟─00000000-0000-0000-0000-000000000001

@@ -28,19 +28,9 @@ begin
 	df_ds2_hungarian_clean = CSV.File("./cleaned_data/ds2_hungarian_clean.csv",header=true, delim=',') |> DataFrame
 
 	df_ds2_va_clean = CSV.File("./cleaned_data/ds2_va_clean.csv",header=true, delim=',') |> DataFrame
-end
 
-# ╔═╡ 9ffe16f6-1c8f-4540-a41e-570c18cf87bb
-begin
-	header = ["age", "sex","cp","trestbps","chol","fbs","restecg","thalach","exang","oldpeak","slope","ca","thal","num"]
-	df_ds1 = CSV.read("./data/ds1_statlog_heart.data.txt",header=header, DataFrame)
-	numerical_columns =[4,5,8,10]
-	for i in 1: size(df_ds1)[2]
-	    if !(i in numerical_columns)
-			df_ds1[!,i] = convert.(Int64, df_ds1[:,i])
-			println("Change column $(names(df_ds1)[i]) to Integr!")
-		end
-	end
+	df_ds1 = CSV.File("./cleaned_data/ds1_clean.csv",header=true, delim=',') |> DataFrame
+
 end
 
 # ╔═╡ bb387e7f-5d50-4f88-b0bb-7ac21d4f0f8b
@@ -2227,7 +2217,6 @@ version = "1.4.1+1"
 # ╠═1dee4f7b-7c32-44e4-a426-e576d0c794c6
 # ╠═3ee868db-1074-4ece-868f-79055abc7ca3
 # ╠═8b46940e-5590-470a-9f41-efea0f5cabe9
-# ╠═9ffe16f6-1c8f-4540-a41e-570c18cf87bb
 # ╟─bb387e7f-5d50-4f88-b0bb-7ac21d4f0f8b
 # ╠═b5c57add-2722-4f2e-afdb-4a40247d8f59
 # ╟─6af154e9-1d1d-447d-b154-033539127569

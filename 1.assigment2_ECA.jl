@@ -366,11 +366,15 @@ md"**VA location data**"
 # ╔═╡ f88630cc-1a5a-4942-93eb-f00c7ce2d260
 select!(describe(df_ds2_va_clean), Not(:eltype))
 
+# ╔═╡ 8a097859-639a-4f30-9022-011850fd2dee
+md"Last but not least, export imputated data out to cvs files for next training and dashboarding process."
+
 # ╔═╡ ebb7705e-9ceb-4552-80c8-6a246e252fbc
 begin
 	CSV.write("./cleaned_data/ds2_hungarian_clean.csv", df_ds2_hungarian_clean)
 	CSV.write("./cleaned_data/ds2_switzerland_clean.csv", df_ds2_switzerland_clean)
 	CSV.write("./cleaned_data/ds2_va_clean.csv", df_ds2_va_clean);
+	CSV.write("./cleaned_data/ds1_clean.csv", df_ds1);
 end;
 
 # ╔═╡ 4bcb9603-f205-481a-847a-c6b9d056db5a
@@ -2694,7 +2698,7 @@ version = "1.4.1+0"
 # ╠═87cbfcfa-c85e-4784-9baf-30ec5d7ba9ef
 # ╟─43dc0b47-46d8-4bd9-8df0-695eade5775f
 # ╠═93cb65e4-8345-4682-ba7b-bde12c376511
-# ╠═927d169d-e53b-4175-91ac-6c21a4e1a5ae
+# ╟─927d169d-e53b-4175-91ac-6c21a4e1a5ae
 # ╟─8f88b7ea-72a7-4b45-95e1-b1901bef0979
 # ╠═31d65c24-005b-4f85-b1c8-c12ac0df4ff0
 # ╠═8a2b9896-a660-4081-9517-97898b137822
@@ -2708,6 +2712,7 @@ version = "1.4.1+0"
 # ╠═fc6ed8d3-eff5-41ff-b8f4-8c8ad443fd1e
 # ╟─51b9d71c-2088-42c6-846a-e0cf5aac4e5e
 # ╠═f88630cc-1a5a-4942-93eb-f00c7ce2d260
+# ╟─8a097859-639a-4f30-9022-011850fd2dee
 # ╠═ebb7705e-9ceb-4552-80c8-6a246e252fbc
 # ╟─4bcb9603-f205-481a-847a-c6b9d056db5a
 # ╟─00000000-0000-0000-0000-000000000001
