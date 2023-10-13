@@ -64,13 +64,24 @@ function pairwise_difference(arr)
     return result, unique_pair
 end
 
-# ╔═╡ 8bf1a996-6cc7-432a-8f91-521cdee30815
+# ╔═╡ b806172b-909d-45b3-933f-932c68eb42a8
 function generate_pie_chart(title, dataset_name, col)
-	grades ,names = pairwise_difference(col)
-	p = Plots.pie(names, grades)
-	title!("$title in $dataset_name Dataset", titlefontsize=8)
-	annotate!()
-	return p
+    grades, names = pairwise_difference(col)
+    p = Plots.pie(names, grades)
+    title!("$title in $dataset_name Dataset", titlefontsize = 8)
+
+    # Add percentage annotations
+    total = sum(grades)
+    angle = 0
+    for i in 1:length(names)
+        percent = round(grades[i] / total * 100, digits = 1)
+        angle += grades[i] / total * 2π
+        x = 0.5 * cos(angle - (grades[i] / total) * π)
+        y = 0.5 * sin(angle - (grades[i] / total) * π)
+        Plots.annotate!(x, y, Plots.text("$percent%", (0, 0), :white, halign = :center, valign = :center, pointsize = 8))
+    end
+
+    return p
 end
 
 # ╔═╡ 8cc749a9-5781-499a-acc7-a0512f4126fc
@@ -89,6 +100,9 @@ begin
 	@info PlutoRunner.currently_running_cell_id
 	Plots.plot(pie_heart_disease,pie_sex,pie_cp,restecg,slope,thal, layout=(3,2), spacing=10,size=(800, 1000))
 end
+
+# ╔═╡ 61d95eff-6cb6-4281-9d66-8a0adeefa542
+
 
 # ╔═╡ 05cc6b23-7c8d-4604-bf20-fa9ded36a579
 begin
@@ -2837,8 +2851,9 @@ version = "1.4.1+1"
 # ╠═a27f285a-fdc9-4aac-9abd-2316479c4843
 # ╠═c3228406-1ffc-4979-a712-47a0f5a6300b
 # ╠═50cfa07a-53c8-4b04-a190-e936f4cfac51
-# ╠═8bf1a996-6cc7-432a-8f91-521cdee30815
+# ╠═b806172b-909d-45b3-933f-932c68eb42a8
 # ╠═8cc749a9-5781-499a-acc7-a0512f4126fc
+# ╠═61d95eff-6cb6-4281-9d66-8a0adeefa542
 # ╠═05cc6b23-7c8d-4604-bf20-fa9ded36a579
 # ╠═3815e713-2a40-43d5-95fb-dc29c28abb66
 # ╠═70aebace-b825-4631-a6ea-48b8f2fa2b7e
