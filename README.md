@@ -41,4 +41,4 @@ are listed in the README.md file:
 
 -   Jason Lu (EDA, Dashboard)
 -   Chris Yang (EDA, Data imputation, Training Model, Dashboard)
--   Gran Isaiah (EDA, Data imputation, Training Model, Report)
+-   Isaiah Grant (EDA, Data imputation, Training Model, Report)
